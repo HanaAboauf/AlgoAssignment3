@@ -1,7 +1,6 @@
 #include "bits/stdc++.h"
 using namespace std;
 
-const int INF = 0xfffffff;
 
 void smax(long long& a, long long b) {
     a = max(a, b);
@@ -11,15 +10,14 @@ void smin(long long& a, long long b) {
     a = min(a, b);
 }
 
-class UnionFind {
+class DSU {
 public:
     vector<int> parent;
     int size;
 
-    UnionFind(int n) : size(n), parent(n + 1) {
-        for (int i = 0; i <= n; ++i) {
-            parent[i] = i;
-        }
+    DSU(int n) : size(n), parent(n + 1) {
+
+        iota(parent.begin(),parent.end(),0);
     }
 
     int find(int x) {
@@ -63,18 +61,18 @@ bool cmp( Edge& a,  Edge& b) {
 }
 
 void minimalCost(int n,long long G,long long S) {
-    vector<Edge> x;
+    vector<Edge> filterd;
     sort(edges.begin(), edges.end(), cmp);
-    UnionFind uf(n);
+    DSU uf(n);
     long long g0 = 0, s0 = 0;
     long long res = numeric_limits<long long>::max();
 
     for (const auto& edge : edges) {
         uf.clear();
-        x.push_back(edge);
-        for (int j = x.size() - 1; j > 0; --j) {
-            if (x[j].s < x[j - 1].s) {
-                swap(x[j], x[j - 1]);
+        filterd.push_back(edge);
+        for (int j = filterd.size() - 1; j > 0; --j) {
+            if (filterd[j].s < filterd[j - 1].s) {
+                swap(filterd[j], filterd[j - 1]);
             }
         }
 
@@ -83,7 +81,7 @@ void minimalCost(int n,long long G,long long S) {
         int fin = 0;
 
         vector<Edge> temp;
-        for (const auto& e : x) {
+        for (const auto& e : filterd) {
             if (!uf.connected(e.from, e.to)) {
                 temp.push_back(e);
                 smax(g0, (long long)e.g);
@@ -93,7 +91,7 @@ void minimalCost(int n,long long G,long long S) {
             }
         }
 
-        x = temp;
+        filterd = temp;
 
         if (fin == n - 1) {
             smin(res, g0 * G + s0 * S);
