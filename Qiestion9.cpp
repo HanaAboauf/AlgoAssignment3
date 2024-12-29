@@ -86,8 +86,8 @@ void minimalCost(int n,long long G,long long S) {
         for (const auto& e : x) {
             if (!uf.connected(e.from, e.to)) {
                 temp.push_back(e);
-                smax(g0, static_cast<long long>(e.g));
-                smax(s0, static_cast<long long>(e.s));
+                smax(g0, (long long)e.g);
+                smax(s0, (long long)e.s);
                 uf.unite(e.from, e.to);
                 if (++fin == n - 1) break;
             }
